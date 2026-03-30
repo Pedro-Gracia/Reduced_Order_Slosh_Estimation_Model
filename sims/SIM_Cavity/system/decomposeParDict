@@ -1,0 +1,36 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  www.openfoam.com
+    \\  /    A nd           | Version:  v2512
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      decomposeParDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// For my 5950X, 16 physical cores is the sweet spot
+numberOfSubdomains 16;
+
+// Switch method to scotch
+method          scotch;
+
+// Scotch doesn't strictly need a 'coeffs' sub-dictionary to run, 
+//simpleCoeffs
+//{
+//    n           (4 2 2); // 4*2*2 = 16
+//    delta       0.001;
+//}
+
+// but you can include an empty one or leave it out entirely.
+scotchCoeffs
+{
+    // No coefficients needed; Scotch handles the math!
+}
+
+// ************************************************************************* //
