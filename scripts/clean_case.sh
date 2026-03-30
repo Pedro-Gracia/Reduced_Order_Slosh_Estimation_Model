@@ -12,6 +12,9 @@
 # ----------- Input handling -----------
 CASE_DIR="$1"
 
+# Remove processor directories
+rm -rf processor*
+
 if [ -z "$CASE_DIR" ]; then
     echo "ERROR: No case path provided"
     echo "Usage: clean_case.sh <case_path>"

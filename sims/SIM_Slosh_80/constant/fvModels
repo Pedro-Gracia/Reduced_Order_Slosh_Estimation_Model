@@ -1,0 +1,39 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvModels;
+}
+
+lateralPulse
+{
+    type            accelerationSource;
+
+    active          yes;
+
+    selectionMode   all; 
+
+    U               U;
+
+    value           (3 0 0);
+
+    velocity        scale;
+
+    scale
+    {
+        type        halfCosineRamp;
+        start       0.5;
+        duration    0.2;
+    }
+}
+
+// ************************************************************************* //
