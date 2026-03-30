@@ -1,0 +1,6 @@
+[submodule "OpenFOAM-10"]
+	path = OpenFOAM-10
+	url = https://github.com/OpenFOAM/OpenFOAM-10.git
+[submodule "ThirdParty-10"]
+	path = ThirdParty-10
+	url = https://github.com/OpenFOAM/ThirdParty-10.git
