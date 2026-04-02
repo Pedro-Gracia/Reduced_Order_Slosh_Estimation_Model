@@ -7,27 +7,27 @@
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    format ascii;
-    class dictionary;
-    location "system";
-    object controlDict;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
 }
 
 application     interFoam;
 
-startFrom       latestTime;
+startFrom       startTime;
 startTime       0;
+
 stopAt          endTime;
-endTime         3.0;
+endTime         20.0;
 
 deltaT          0.001;
 
 writeControl    adjustableRunTime;
-writeInterval   0.01;
+writeInterval   0.02;
 
 adjustTimeStep  yes;
-maxCo           0.3;
-maxAlphaCo      0.3;
-
+maxCo           0.20;
+maxAlphaCo      0.20;
 
 // ************************************************************************* //

@@ -20,8 +20,8 @@ FoamFile
     {
         type            wall;
         inGroups        List<word> 1(wall);
-        nFaces          16000;
-        startFace       376000;
+        nFaces          22000;
+        startFace       133000;
     }
 )
 
