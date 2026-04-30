@@ -10,62 +10,80 @@ This case is intended as:
 
 * A **numerical experiment** for slosh dynamics
 * A **validation environment** for reduced-order modeling
-* A **data-generation tool** for estimation and control (e.g., EKF, LQR)
+* A **data-generation tool** for estimation and control, such as EKF, MHE, and LQR development
 
 ---
 
 ## Governing Equations
 
-The flow is governed by the **incompressible Navier–Stokes equations**:
+The flow is governed by the **incompressible Navier--Stokes equations**.
 
-### Continuity (mass conservation)
+### Continuity Equation
 
-[
+The incompressibility constraint is given by
+
+$$
 \nabla \cdot \mathbf{U} = 0
-]
+$$
 
-### Momentum equation
+where $\mathbf{U}$ is the velocity field.
 
-[
-\frac{\partial (\rho \mathbf{U})}{\partial t}
+### Momentum Equation
 
-* \nabla \cdot (\rho \mathbf{U} \mathbf{U})
-  = -\nabla p + \nabla \cdot (\mu \nabla \mathbf{U}) + \rho \mathbf{g} + \rho \mathbf{a}(t)
-  ]
+The momentum equation is written as
+
+$$
+\frac{\partial \left(\rho \mathbf{U}\right)}{\partial t}
++
+\nabla \cdot \left(\rho \mathbf{U}\mathbf{U}\right)
+=
+-\nabla p
++
+\nabla \cdot \left(\mu \nabla \mathbf{U}\right)
++
+\rho \mathbf{g}
++
+\rho \mathbf{a}(t)
+$$
 
 where:
 
-* (\mathbf{U}) = velocity
-* (p) = pressure
-* (\rho) = density
-* (\mu) = dynamic viscosity
-* (\mathbf{g}) = gravitational acceleration
-* (\mathbf{a}(t)) = imposed time-dependent acceleration (forcing)
+* $\mathbf{U}$ is the velocity field.
+* $p$ is the pressure.
+* $\rho$ is the density.
+* $\mu$ is the dynamic viscosity.
+* $\mathbf{g}$ is the gravitational acceleration.
+* $\mathbf{a}(t)$ is the imposed time-dependent acceleration forcing.
 
 ---
 
-## Multiphase Model (VOF)
+## Multiphase Model: Volume of Fluid Method
 
-The interface is tracked using a scalar field:
+The liquid-gas interface is tracked using the water volume-fraction field,
 
-[
+$$
 \alpha_{\text{water}} \in [0,1]
-]
+$$
 
-* (\alpha = 1): liquid
-* (\alpha = 0): gas
-* (0 < \alpha < 1): interface
+where:
 
-The transport equation for the phase fraction is:
+* $\alpha_{\text{water}} = 1$ corresponds to liquid.
+* $\alpha_{\text{water}} = 0$ corresponds to gas.
+* $0 < \alpha_{\text{water}} < 1$ corresponds to the liquid-gas interface.
 
-[
+The phase-fraction transport equation is written as
+
+$$
 \frac{\partial \alpha}{\partial t}
++
+\nabla \cdot \left(\mathbf{U}\alpha\right)
++
+\nabla \cdot \left[\mathbf{U}_c \alpha \left(1-\alpha\right)\right]
+=
+0
+$$
 
-* \nabla \cdot (\mathbf{U} \alpha)
-* \nabla \cdot \left( \mathbf{U}_c \alpha (1-\alpha) \right) = 0
-  ]
-
-where the last term is an **interface compression term** used to maintain a sharp free surface.
+where the last term is an **interface-compression term** used to maintain a sharp free surface.
 
 ---
 
@@ -74,37 +92,37 @@ where the last term is an **interface compression term** used to maintain a shar
 * Incompressible flow
 * Newtonian fluids
 * Laminar regime
-* Immiscible phases (air and water)
+* Immiscible phases, air and water
 * No phase change
 * Rigid tank walls
-* Closed domain (no inflow/outflow)
+* Closed domain with no inflow or outflow
 
 ---
 
 ## Problem Configuration
 
 * Geometry: rectangular tank
-* Fill fraction: ~50%
-* Gravity: lunar-like ((g = -1.62, \text{m/s}^2))
+* Fill fraction: approximately $50\%$
+* Gravity: lunar-like acceleration, $g = -1.62~\text{m/s}^2$
 * Excitation: lateral acceleration pulse
 
 ---
 
 ## Forcing Model
 
-The slosh is induced via a **time-dependent body acceleration**:
+The slosh motion is induced using a time-dependent body acceleration,
 
-[
-\mathbf{a}(t) = a_x(t),\hat{i}
-]
+$$
+\mathbf{a}(t) = a_x(t)\,\hat{\mathbf{i}}
+$$
 
-where (a_x(t)) is defined using a smooth temporal profile.
+where $a_x(t)$ is defined using a smooth temporal forcing profile.
 
 This produces:
 
-* initial perturbation of the free surface
-* excitation of dominant slosh modes
-* subsequent free decay
+* Initial perturbation of the free surface
+* Excitation of the dominant slosh modes
+* Subsequent free-decay response
 
 ---
 
@@ -120,14 +138,14 @@ interFoam
 
 * Finite volume discretization
 * VOF interface tracking
-* PIMPLE algorithm (PISO + SIMPLE hybrid)
+* PIMPLE algorithm, which combines features of PISO and SIMPLE
 * Second-order spatial schemes
 
 ---
 
 ## Case Structure
 
-```
+```text
 SIM_Slosh_50/
 ├── 0/           # Initial and boundary conditions
 ├── constant/    # Mesh, fluid properties, forcing
@@ -141,7 +159,7 @@ SIM_Slosh_50/
 
 ### 0/
 
-* `alpha.water`: phase fraction
+* `alpha.water`: phase-fraction field
 * `U`: velocity field
 * `p_rgh`: modified pressure field
 
@@ -153,12 +171,12 @@ SIM_Slosh_50/
 
 Structured mesh with **non-uniform vertical refinement**:
 
-* fine near free surface
-* coarse at bottom
+* Fine near the free surface
+* Coarser near the bottom of the tank
 
 #### phaseProperties
 
-Defines multiphase system.
+Defines the multiphase system.
 
 #### physicalProperties.*
 
@@ -166,11 +184,11 @@ Defines density and viscosity.
 
 #### momentumTransport
 
-Laminar model.
+Defines the laminar transport model.
 
 #### fvModels
 
-Defines **time-dependent acceleration forcing**.
+Defines the **time-dependent acceleration forcing**.
 
 ---
 
@@ -178,58 +196,60 @@ Defines **time-dependent acceleration forcing**.
 
 #### controlDict
 
-Time integration and output.
+Defines time integration, run controls, and output settings.
 
 #### fvSchemes
 
-Discretization schemes.
+Defines the discretization schemes.
 
 #### fvSolution
 
-Linear solvers and coupling.
+Defines the linear solvers and pressure-velocity coupling controls.
 
 #### setFieldsDict
 
-Initial condition for liquid region.
+Defines the initial liquid region.
 
 ---
 
 ## Important Numerical Concepts
 
-### Pressure formulation
+### Pressure Formulation
 
-OpenFOAM solves for:
+OpenFOAM solves for the modified pressure variable,
 
-[
+$$
 p_{rgh} = p - \rho g h
-]
+$$
 
 This improves numerical stability in gravity-dominated flows.
 
 ---
 
-### Interface compression
+### Interface Compression
 
-Controlled via:
+The interface compression strength is controlled using:
 
-```
+```text
 cAlpha
 ```
 
-Balances:
+This parameter balances:
 
-* sharp interface
-* numerical stability
+* Interface sharpness
+* Numerical stability
 
 ---
 
-### Courant number control
+### Courant Number Control
 
-[
+The Courant number is defined as
+
+$$
 Co = \frac{U \Delta t}{\Delta x}
-]
+$$
 
-Maintained below a threshold to ensure stability.
+and is maintained below a selected threshold to improve numerical stability.
 
 ---
 
@@ -237,81 +257,97 @@ Maintained below a threshold to ensure stability.
 
 ### 1. Load OpenFOAM
 
-```
+```bash
 source ../../scripts/load_openfoam.sh
 ```
 
 ---
 
-### 2. Navigate to case
+### 2. Navigate to the Case Directory
 
-```
+```bash
 cd sims/SIM_Slosh_50
 ```
 
 ---
 
-### 3. Reset case
+### 3. Reset the Case
 
-```
+```bash
 ./cleanCase.sh
 
-rm -rf dynamicCode/liquidCOM
 ```
-
+---
+### 4.Build liquidCOM Logging Library 
+```bash
+./../../scripts/setup_liquidCOM.sh 
+```
 ---
 
-### 4. Generate mesh
+### 5. Generate the Mesh
 
-```
+```bash
 blockMesh
 ```
 
 ---
 
-### 5. Initialize fluid
+### 6. Initialize the Fluid Region
 
-```
+```bash
 setFields
 ```
 
 ---
 
-### 6. Decompose domain
+### 7. Decompose the Domain
 
-```
+```bash
 decomposePar -force -time 0
 ```
 
 ---
 
-### 7. Run simulation
+### 8. Run the Simulation
 
+Run the simulation in parallel using:
+
+```bash
+mpirun -np 16 interFoam -parallel
 ```
-mpirun -np 16 interFoam -parallel 
+Change the number 16 to match the number of cores you want to use, based on your machine.
 
-For only progress :
-mpirun -np 16 interFoam -parallel 2>&1 \
-| tee log.interFoam \
-| grep --line-buffered "Progress:" \
-| sed -E 's/.*Progress: ([0-9.]+%).*/Progress: \1/'
+Run the simulation in parallel while displaying the solver output in the terminal and saving the full log file:
 
+```bash
+mpirun -np 16 interFoam -parallel 2>&1 | tee log.interFoam
 ```
 
 ---
 
-### 8. Reconstruct solution
+### 9. Reconstruct the Solution
 
-```
+```bash
 reconstructPar
+```
 
-rm -rf data && reconstructPar  -fields '(alpha.water)' && mkdir -p data && find . -maxdepth 1 -type d \( -regex './[0-9.]+' -o -name 'processor*' \) -exec mv {} data/ \;
+To reconstruct only the `alpha.water` field and move the time directories into a `data` folder, use:
 
+```bash
+rm -rf data && reconstructPar -fields '(alpha.water)' && mkdir -p data && find . -maxdepth 1 -type d \( -regex './[0-9.]+' -o -name 'processor*' \) -exec mv {} data/ \;
+```
+
+To merge the liquid center-of-mass output into one file, use:
+
+```bash
 cd postProcessing/liquidCOM
 
-# merge all files into one
 awk 'FNR==1 && NR!=1 {next} {print}' */liquidCOM.dat > liquidCOM_all.dat
+```
 
+To write cell centers and cell volumes, use:
+
+```bash
 postProcess -func writeCellCentres -parallel -time 0
 postProcess -func writeCellVolumes -parallel -time 0
 ```
@@ -320,29 +356,34 @@ postProcess -func writeCellVolumes -parallel -time 0
 
 ## Visualization
 
-```
+Open the case in ParaView using:
+
+```bash
 paraFoam -builtin
 ```
 
 ### In ParaView
 
-* Select `alpha.water`
-* Apply **Contour** at:
+* Select `alpha.water`.
+* Apply a **Contour** filter.
+* Use the contour value:
 
-```
+```text
 alpha.water = 0.5
 ```
 
-This approximates the free surface.
+This approximates the liquid-gas free surface.
 
 ---
 
 ## Animation
 
-```
+To create an animation from exported image frames, use:
+
+```bash
 ffmpeg -framerate 30 -i SLOSH.%04d.png \
 -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" \
--c:v libx264 -pix_fmt yuv420p slosh.mp4
+-c:v libx264 -pix_fmt yuv450p slosh.mp4
 ```
 
 ---
@@ -351,31 +392,32 @@ ffmpeg -framerate 30 -i SLOSH.%04d.png \
 
 The simulation should exhibit:
 
-* smooth free-surface oscillation
-* dominant first-mode slosh
-* gradual decay after excitation
+* Smooth free-surface oscillation
+* Dominant first-mode slosh behavior
+* Gradual decay after the forcing input is removed
 
 ---
 
-## Relevance to Project
+## Relevance to the Project
 
 This simulation provides:
 
-* time-resolved free-surface dynamics
-* force and motion data
-* system response to known excitation
+* Time-resolved free-surface dynamics
+* Wall-force data
+* Liquid center-of-mass motion
+* System response to a known excitation input
 
-These are used to develop:
+These data are used to develop:
 
-* reduced-order slosh models
-* parameter estimation algorithms
-* control-oriented representations
+* Reduced-order slosh models
+* Parameter estimation algorithms
+* Control-oriented force representations
 
 ---
 
 ## Summary
 
-```
+```text
 Mesh → Initialize → Solve → Reconstruct → Visualize → Analyze
 ```
 
