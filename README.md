@@ -35,16 +35,12 @@ sudo dnf install \
     fftw-devel
 ```
 ## Workflow Diagram
-
-The complete workflow is shown below.
-
-Save the workflow diagram in the repository using the following path:
-
-    docs/workflow.png
-
-Then the diagram will appear in this README as:
-
 ![Reduced-Order Slosh Workflow](docs/workflow.png)
+
+
+The comprehensive academic report, including detailed explanations and derivations, is available at the following location:
+
+ docs/Final_Project_Report.pdf
 
 ---
 
