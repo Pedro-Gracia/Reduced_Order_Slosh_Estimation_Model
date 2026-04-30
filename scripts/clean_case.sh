@@ -69,6 +69,38 @@ else
     echo "Keeping mesh."
 fi
 
+# ----------------------------------------
+# Reset alpha.water 
+# ----------------------------------------
+echo "Resetting 0/alpha.water..."
+
+cat > 0/alpha.water << EOF
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      alpha.water;
+}
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    walls
+    {
+        type zeroGradient;
+    }
+}
+EOF
+
+# --------------------------------------------------
+# Remove logs
+# --------------------------------------------------
+rm -f log.*
+
 echo "----------------------------------------"
 echo "Case cleaned successfully"
 echo "----------------------------------------"

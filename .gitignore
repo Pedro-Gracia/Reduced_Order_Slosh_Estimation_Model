@@ -42,3 +42,4 @@
 
 OpenFOAM-10/platforms/
 ThirdParty-10/platforms/
+sims/SIM_Slosh_*/SIM_DATA_NOT_SHARE/

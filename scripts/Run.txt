@@ -1,0 +1,7 @@
+./../../scripts/clean_case.sh .
+blockMesh
+setFields
+decomposePar -force -time 0
+mpirun -np 16 foamRun -solver incompressibleVoF -parallel 2>&1 | tee log.incompressibleVoF | grep --line-buffered "Progress:" | sed -E 's/.*Progress: ([0-9.]+%).*/Progress: \1/'
+rm -rf data && reconstructPar  -fields '(alpha.water)' && mkdir -p data && find . -maxdepth 1 -type d \( -regex './[0-9.]+' -o -name 'processor*' \) -exec mv {} data/ \;
+paraFoam -builtin
